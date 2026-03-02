@@ -1,31 +1,45 @@
 import os, sys
 
-# ဒီ code က ဘယ် Key ကိုမှ စစ်မှာမဟုတ်ဘဲ Script ကို အတင်းအကျပ် ပွင့်အောင်လုပ်မှာပါ
-def force_start():
+# ၁။ မူရင်း Key စစ်တဲ့ function တွေကို လှည့်စားဖို့ (Fake logic)
+class FakeResponse:
+    def json(self): return {"KEY": ["u0_a36110361"]}
+    def status_code(self): return 200
+
+# ၂။ requests.get ကို အလုပ်မလုပ်အောင် တားဆီးမယ်
+import requests
+requests.get = lambda *args, **kwargs: FakeResponse()
+
+def start_bypass():
     os.system('clear')
-    print("\033[1;32m[+] Bypassing Key System... Please Wait.\033[0m")
+    print("\033[1;32m[+] Sumon Mobile Final Bypass Loading...\033[0m")
+    
     try:
-        # starlink module ကို အရင်သွင်းမယ်
+        # ၃။ starlink ကို အတင်းအကျပ် သွင်းမယ်
         import starlink
         
-        # Binary ဖိုင်ထဲမှာ ပုံမှန်အားဖြင့် main() သို့မဟုတ် menu() ဆိုတဲ့ 
-        # function နဲ့ script ကို စတင်လေ့ရှိပါတယ်။ 
-        # Key စစ်တဲ့ function ကို ကျော်ပြီး main function ကို တိုက်ရိုက်ခေါ်ပါမယ်။
+        # ၄။ Binary ထဲမှာ ပါလေ့ရှိတဲ့ Main Entry Point တွေကို အစဉ်လိုက် စမ်းခေါ်မယ်
+        entry_points = ['main', 'menu', 'home', 'start', 'Login']
         
-        if hasattr(starlink, 'main'):
-            starlink.main()
-        elif hasattr(starlink, 'menu'):
-            starlink.menu()
-        elif hasattr(starlink, 'start'):
-            starlink.start()
-        else:
-            # ဘာ function မှန်းမသိရင် starlink ထဲက attribute အကုန်လုံးကို စမ်းကြည့်မယ်
-            print("\033[1;33m[!] Scanning script entry point...\033[0m")
-            starlink.__dict__['main']() # အတင်းခေါ်ခြင်း
-            
+        found = False
+        for entry in entry_points:
+            if hasattr(starlink, entry):
+                print(f"\033[1;34m[*] Launching via {entry}...\033[0m")
+                getattr(starlink, entry)()
+                found = True
+                break
+        
+        if not found:
+            # ဘာမှရှာမတွေ့ရင် starlink ထဲက function အားလုံးကို scan ဖတ်မယ်
+            for func in dir(starlink):
+                if not func.startswith("__"):
+                    print(f"\033[1;33m[*] Trying hidden function: {func}\033[0m")
+                    try:
+                        getattr(starlink, func)()
+                    except:
+                        continue
+                        
     except Exception as e:
-        # အကယ်၍ error တက်ရင်လည်း script ကို ဆက် run ခိုင်းထားမယ်
-        pass
+        print(f"\033[1;31m[!] Bypass Error: {e}\033[0m")
 
 if __name__ == '__main__':
-    force_start()
+    start_bypass()
