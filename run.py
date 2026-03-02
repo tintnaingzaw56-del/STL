@@ -1,45 +1,53 @@
-import os, sys
+import os, sys, requests
 
-# ၁။ မူရင်း Key စစ်တဲ့ function တွေကို လှည့်စားဖို့ (Fake logic)
+# SSL warning ပိတ်မယ်
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+# ၁။ Fake Logic ကို ပိုမိုပြည့်စုံအောင် ပြင်ဆင်ခြင်း
 class FakeResponse:
-    def json(self): return {"KEY": ["u0_a36110361"]}
-    def status_code(self): return 200
+    def __init__(self):
+        self.url = "https://portal-as.ruijienetworks.com"
+        self.status_code = 200
+        self.text = '{"KEY": ["u0_a36110361"]}'
+    def json(self):
+        return {"KEY": ["u0_a36110361"]}
 
-# ၂။ requests.get ကို အလုပ်မလုပ်အောင် တားဆီးမယ်
-import requests
+# ၂။ requests.get ကို အပြီးအပိုင် လွှဲပစ်မယ်
 requests.get = lambda *args, **kwargs: FakeResponse()
+requests.post = lambda *args, **kwargs: FakeResponse()
 
-def start_bypass():
+def final_bypass():
     os.system('clear')
-    print("\033[1;32m[+] Sumon Mobile Final Bypass Loading...\033[0m")
+    print("\033[1;32m[+] Sumon Mobile Deep Bypass System...\033[0m")
     
     try:
-        # ၃။ starlink ကို အတင်းအကျပ် သွင်းမယ်
+        # ၃။ starlink ကို တိုက်ရိုက်ခေါ်မယ်
         import starlink
         
-        # ၄။ Binary ထဲမှာ ပါလေ့ရှိတဲ့ Main Entry Point တွေကို အစဉ်လိုက် စမ်းခေါ်မယ်
-        entry_points = ['main', 'menu', 'home', 'start', 'Login']
-        
+        # ၄။ ပုံမှန် Entry points တွေအပြင် အကုန်လုံးကို စမ်းမယ်
+        entry_list = ['main', 'menu', 'home', 'start']
         found = False
-        for entry in entry_points:
-            if hasattr(starlink, entry):
-                print(f"\033[1;34m[*] Launching via {entry}...\033[0m")
-                getattr(starlink, entry)()
+        
+        for method in entry_list:
+            if hasattr(starlink, method):
+                print(f"\033[1;34m[*] Cracking through {method}...\033[0m")
+                getattr(starlink, method)()
                 found = True
                 break
         
         if not found:
-            # ဘာမှရှာမတွေ့ရင် starlink ထဲက function အားလုံးကို scan ဖတ်မယ်
-            for func in dir(starlink):
-                if not func.startswith("__"):
-                    print(f"\033[1;33m[*] Trying hidden function: {func}\033[0m")
+            # တကယ်လို့ ဘာမှမရှိရင် function အားလုံးကို scan ဖတ်ပြီး run မယ်
+            for name in dir(starlink):
+                if not name.startswith("_"):
                     try:
-                        getattr(starlink, func)()
-                    except:
-                        continue
-                        
+                        getattr(starlink, name)()
+                        break
+                    except: continue
+
     except Exception as e:
-        print(f"\033[1;31m[!] Bypass Error: {e}\033[0m")
+        # Error တက်ရင်လည်း logic ကို ကျော်ပြီး run ခိုင်းထားမယ်
+        pass
 
 if __name__ == '__main__':
-    start_bypass()
+    final_bypass()
